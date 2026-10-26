@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stars Zone | Creator Rewards</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-mark">✦</span>
+      <span>STARS ZONE <small>MEDIA</small></span>
+    </a>
+
+    <div class="top-actions">
+      <button id="langBtn" class="lang-btn">العربية</button>
+      <button id="logoutBtn" class="ghost-btn hidden" data-i18n="logout">Log out</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <!-- Login -->
+    <section id="authView" class="auth-layout">
+      <div class="hero-copy">
+        <div class="eyebrow">
+          <span class="live-dot"></span>
+          <span data-i18n="eyebrow">CREATOR ACTIVATION PROGRAM</span>
+        </div>
+
+        <h1 data-i18n="heroTitle">
+          Your next level<br><span>starts here.</span>
+        </h1>
+
+        <p data-i18n="heroText">
+          Show up, go LIVE, and unlock exclusive rewards.
+        </p>
+
+        <div class="hero-perks">
+          <span>✦ <span data-i18n="perk1">Track your progress</span></span>
+          <span>🎁 <span data-i18n="perk2">Unlock creator gifts</span></span>
+          <span>⚡ <span data-i18n="perk3">Celebrate milestones</span></span>
+        </div>
+      </div>
+
+      <div class="panel auth-panel">
+        <div class="panel-kicker" data-i18n="memberAccess">MEMBER ACCESS</div>
+        <h2 data-i18n="welcomeBack">Welcome, creator</h2>
+
+        <p class="muted" data-i18n="authHint">
+          Sign in to view your activation journey.
+        </p>
+
+        <form id="authForm">
+          <label for="email" data-i18n="email">Email address</label>
+          <input id="email" type="email" required autocomplete="off" placeholder="you@example.com">
+
+          <label for="password" data-i18n="password">Password</label>
+          <input id="password" type="password" required minlength="6" autocomplete="off" placeholder="••••••••">
+
+          <button class="primary-btn full" type="submit" data-i18n="signIn">
+            Sign in
+          </button>
+
+          <p id="authMessage" class="form-message" role="status"></p>
+        </form>
+
+        <p class="tiny muted" data-i18n="accountNote">
+          Creator accounts are created by your agency administrator.
+        </p>
+      </div>
+    </section>
+
+    <!-- Creator dashboard -->
+    <section id="appView" class="hidden">
+      <div class="welcome-row">
+        <div>
+          <div class="eyebrow">
+            <span class="live-dot"></span>
+            <span data-i18n="yourJourney">YOUR CREATOR JOURNEY</span>
+          </div>
+
+          <h1>
+            <span data-i18n="hello">Hello</span>,
+            <span id="creatorName">Creator</span> ✨
+          </h1>
+
+          <p class="muted" data-i18n="journeyText">
+            Every active day brings you closer to your next reward.
+          </p>
+        </div>
+
+        <div class="creator-meta">
+          <span data-i18n="joinDate">JOIN DATE</span>
+          <strong id="joinDateValue">—</strong>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <article class="stat-card">
+          <span class="stat-icon">📅</span>
+          <span class="stat-label" data-i18n="activeDays">Active days</span>
+          <strong><span id="activeDaysValue">0</span><small> / 8</small></strong>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-icon">⏱️</span>
+          <span class="stat-label" data-i18n="liveHours">LIVE hours</span>
+          <strong><span id="liveHoursValue">0</span><small> / 20</small></strong>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-icon">🎁</span>
+          <span class="stat-label" data-i18n="rewardStatus">Reward status</span>
+          <strong id="rewardStatusValue" class="status-text">In progress</strong>
+        </article>
+      </div>
+
+      <div class="content-grid">
+        <!-- Activation -->
+        <section class="panel activation-panel">
+          <div class="section-heading">
+            <div>
+              <div class="panel-kicker" data-i18n="first14">FIRST 14 DAYS</div>
+              <h2 data-i18n="activationTitle">Your activation checklist</h2>
+            </div>
+            <span class="pill">8 CHECK-INS</span>
+          </div>
+
+          <p class="muted" data-i18n="activationText">
+            Complete 8 eligible active days and 20 LIVE hours within your first 14 days.
+          </p>
+
+          <div id="checkinGrid" class="checkin-grid"></div>
+
+          <div class="progress-wrap">
+            <div class="progress-label">
+              <span data-i18n="progress">Progress</span>
+              <strong id="progressLabel">0 / 8</strong>
+            </div>
+            <div class="progress-track">
+              <span id="progressBar"></span>
+            </div>
+          </div>
+
+          <p class="tiny muted" data-i18n="checkinNote">
+            Your activity must be verified by Stars Zone Media.
+          </p>
+        </section>
+
+        <!-- Rewards -->
+        <section class="panel rewards-panel">
+          <div class="section-heading">
+            <div>
+              <div class="panel-kicker" data-i18n="yourMoment">YOUR MOMENT</div>
+              <h2 data-i18n="rewardsTitle">Spin for a reward</h2>
+            </div>
+            <span class="sparkle">✧</span>
+          </div>
+
+          <p class="muted" data-i18n="rewardsText">
+            You’ve earned your chance. Give the wheel a spin!
+          </p>
+
+          <div class="wheel-stage">
+            <div class="wheel-pointer">▼</div>
+            <div class="wheel-box">
+              <svg id="wheelSvg" viewBox="0 0 300 300" class="wheel-svg"></svg>
+              <div class="wheel-center">SZ<br><small>REWARDS</small></div>
+            </div>
+          </div>
+
+          <button id="spinBtn" class="primary-btn full" data-i18n="spin">
+            ✦ SPIN THE WHEEL
+          </button>
+
+          <p id="spinMessage" class="form-message" role="status"></p>
+
+          <div id="resultCard" class="result-card hidden">
+            <div class="result-confetti">✦ ✨ 🎉 ✨ ✦</div>
+            <h3 data-i18n="congrats">Congratulations!</h3>
+            <p id="rewardName"></p>
+
+            <p class="muted" data-i18n="upgradeMessage">
+              You upgraded to the next rewards system. Kindly contact your agent.
+            </p>
+
+            <button id="redeemBtn" class="secondary-btn full" data-i18n="redeem">
+              Redeem reward
+            </button>
+
+            <p id="redeemMessage" class="form-message"></p>
+          </div>
+
+          <p class="tiny muted" data-i18n="rewardTerms">
+            Rewards are subject to agency verification and availability.
+          </p>
+        </section>
+      </div>
+    </section>
+
+    <footer>
+      <span>✦ STARS ZONE MEDIA</span>
+      <span data-i18n="footer">Creator growth. Real recognition.</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
