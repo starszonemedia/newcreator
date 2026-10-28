@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
 
       - name: Create auth.json from Secret
         run: echo '${{ secrets.AUTH_JSON }}' > auth.json
