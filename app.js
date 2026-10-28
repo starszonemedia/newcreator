@@ -61,6 +61,7 @@ const i18n = {
     congrats: "Congratulations!",
     upgradeMessage: "You upgraded to the next rewards system. Kindly contact your agent.",
     redeem: "Redeem reward",
+    redeemedStatus: "Redeemed, kindly contact your agent",
     rewardTerms: "Rewards are subject to agency verification and availability. One spin per eligible creator account.",
     footer: "Creator growth. Real recognition.",
     day: "Day",
@@ -113,6 +114,7 @@ const i18n = {
     congrats: "ألف مبروك!",
     upgradeMessage: "لقد انتقلت إلى نظام المكافآت التالي. يُرجى التواصل مع الوكيل المسؤول عنك.",
     redeem: "استلام المكافأة",
+    redeemedStatus: "تم الاستلام، يُرجى التواصل مع الوكيل المسؤول عنك",
     rewardTerms: "تخضع المكافآت للتحقق من الوكالة والتوفر. محاولة واحدة لكل حساب مؤهل.",
     footer: "نمو المبدعين. تقدير حقيقي.",
     day: "اليوم",
@@ -225,7 +227,6 @@ async function loadCreatorData() {
 
   profile = data;
 
-
   $("authView").classList.add("hidden");
   $("appView").classList.remove("hidden");
   $("logoutBtn").classList.remove("hidden");
@@ -266,8 +267,6 @@ async function handleCheckin(key) {
 
   currentCheckins.push(key);
   profile.checkins = currentCheckins;
-
-
 
   if (sb && currentUser) {
     await sb
@@ -435,7 +434,6 @@ $("spinBtn").addEventListener("click", async () => {
       profile.reward = reward;
       profile.has_spun = true;
 
-
       showReward(reward);
 
       if (sb && currentUser) {
@@ -497,7 +495,16 @@ $("redeemBtn").addEventListener("click", async () => {
     const result = await response.json();
     if (!response.ok || !result.success) throw new Error();
 
+    // التعديل هنا: تحديث نص زر الاستلام وتعطيله بنجاح
+    const redeemBtn = $("redeemBtn");
+    redeemBtn.textContent = t("redeemedStatus");
+    redeemBtn.disabled = true;
+    redeemBtn.style.opacity = "0.7";
+    redeemBtn.style.cursor = "not-allowed";
+
     $("redeemMessage").textContent = t("redeemed");
+    $("redeemMessage").classList.add("success");
+
   } catch (error) {
     $("redeemMessage").textContent = t("redeemError");
   }
