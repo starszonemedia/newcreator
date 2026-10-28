@@ -15,10 +15,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
 
       - name: Create auth.json from Secret
-        run: echo '${{ secrets.AUTH_JSON }}' > auth.json
+        env:
+          AUTH_JSON_DATA: ${{ secrets.AUTH_JSON }}
+        run: echo "$AUTH_JSON_DATA" > auth.json
 
       - name: Install dependencies
         run: npm install
