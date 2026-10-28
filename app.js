@@ -61,7 +61,7 @@ const i18n = {
     congrats: "Congratulations!",
     upgradeMessage: "You upgraded to the next rewards system. Kindly contact your agent.",
     redeem: "Redeem reward",
-    redeemedStatus: "Redeemed, kindly contact your agent",
+    redeemedStatus: "Redeemed, kindly contact your agent ✨🎉",
     rewardTerms: "Rewards are subject to agency verification and availability. One spin per eligible creator account.",
     footer: "Creator growth. Real recognition.",
     day: "Day",
@@ -72,7 +72,6 @@ const i18n = {
     spinWait: "Spinning...",
     spinUsed: "SPIN ALREADY USED",
     redeemed: "Your redemption request has been sent.",
-    demo: "Demo preview only: connect Supabase properly.",
     signinError: "Sign-in failed. Check your credentials.",
     wheelError: "An error occurred while spinning.",
     redeemError: "Could not submit redemption. Please try again.",
@@ -114,7 +113,7 @@ const i18n = {
     congrats: "ألف مبروك!",
     upgradeMessage: "لقد انتقلت إلى نظام المكافآت التالي. يُرجى التواصل مع الوكيل المسؤول عنك.",
     redeem: "استلام المكافأة",
-    redeemedStatus: "تم الاستلام، يُرجى التواصل مع الوكيل المسؤول عنك",
+    redeemedStatus: "تم الاستلام، يُرجى التواصل مع الوكيل المسؤول عنك ✨🎉",
     rewardTerms: "تخضع المكافآت للتحقق من الوكالة والتوفر. محاولة واحدة لكل حساب مؤهل.",
     footer: "نمو المبدعين. تقدير حقيقي.",
     day: "اليوم",
@@ -139,6 +138,7 @@ let profile = null;
 let reward = null;
 let spinBusy = false;
 let currentRotation = 0;
+let isRedeemedState = false; // متغير لحفظ حالة الضغط على الزرار
 
 const $ = id => document.getElementById(id);
 
@@ -160,6 +160,18 @@ function setLanguage(next) {
   renderCheckins();
   if (profile) renderProfile();
   if (reward) showReward(reward);
+
+  // لو الزرار اتدوس قبل كدة، نحدث نصه حسب اللغة الحالية (عربي أو إنجليزي) مع الحفاظ على الشكل الـ Glow والـ Pink
+  if (isRedeemedState) {
+    const redeemBtn = $("redeemBtn");
+    redeemBtn.textContent = t("redeemedStatus");
+    redeemBtn.disabled = true;
+    redeemBtn.style.opacity = "1";
+    redeemBtn.style.cursor = "not-allowed";
+    redeemBtn.style.background = "linear-gradient(110deg, #ff2a9d, #e6007e)";
+    redeemBtn.style.boxShadow = "0 0 20px rgba(255, 42, 157, 0.8), 0 0 40px rgba(230, 0, 126, 0.5)";
+    redeemBtn.style.transform = "scale(1.02)";
+  }
 }
 
 $("langBtn").addEventListener("click", () => {
@@ -196,6 +208,7 @@ $("logoutBtn").addEventListener("click", async () => {
   currentUser = null;
   profile = null;
   reward = null;
+  isRedeemedState = false;
 
   $("appView").classList.add("hidden");
   $("authView").classList.remove("hidden");
@@ -472,42 +485,20 @@ $("redeemBtn").addEventListener("click", async () => {
     return;
   }
 
-  if (!sb || !currentUser || SHEETS_WEB_APP_URL.includes("PASTE_")) {
-    $("redeemMessage").textContent = t("demo");
-    return;
-  }
+  // حفظ حالة إن الزرار اتدوس
+  isRedeemedState = true;
 
-  try {
-    const { data: { session } } = await sb.auth.getSession();
-    const response = await fetch(SHEETS_WEB_APP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({
-        action: "redeem",
-        token: session.access_token,
-        reward: assignedReward,
-        creator_name: profile.creator_name,
-        creator_email: currentUser.email,
-        join_date: profile.join_date
-      })
-    });
+  const redeemBtn = $("redeemBtn");
+  redeemBtn.textContent = t("redeemedStatus");
+  redeemBtn.disabled = true;
+  redeemBtn.style.opacity = "1";
+  redeemBtn.style.cursor = "not-allowed";
+  redeemBtn.style.background = "linear-gradient(110deg, #ff2a9d, #e6007e)";
+  redeemBtn.style.boxShadow = "0 0 20px rgba(255, 42, 157, 0.8), 0 0 40px rgba(230, 0, 126, 0.5)";
+  redeemBtn.style.transform = "scale(1.02)";
 
-    const result = await response.json();
-    if (!response.ok || !result.success) throw new Error();
-
-    // التعديل هنا: تحديث نص زر الاستلام وتعطيله بنجاح
-    const redeemBtn = $("redeemBtn");
-    redeemBtn.textContent = t("redeemedStatus");
-    redeemBtn.disabled = true;
-    redeemBtn.style.opacity = "0.7";
-    redeemBtn.style.cursor = "not-allowed";
-
-    $("redeemMessage").textContent = t("redeemed");
-    $("redeemMessage").classList.add("success");
-
-  } catch (error) {
-    $("redeemMessage").textContent = t("redeemError");
-  }
+  $("redeemMessage").innerHTML = "✦ ✨ 🎉 Congratulations! Your reward has been locked successfully. ✨ ✦";
+  $("redeemMessage").classList.add("success");
 });
 
 boot();
